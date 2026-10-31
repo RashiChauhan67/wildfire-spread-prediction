@@ -1,0 +1,4 @@
+# Runtime. Install the package itself with: pip install -e .
+tensorflow>=2.16,<2.20
+numpy
+matplotlib   # optional: only for plotting predictions

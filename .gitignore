@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Secrets
+.env
+.env.*
+
+# Data and training artifacts
+data/*
+!data/README.md
+runs/
+*.keras
+*.h5
+*.tfrecord
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
