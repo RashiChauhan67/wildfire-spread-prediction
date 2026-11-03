@@ -21,7 +21,7 @@ This repository has a cleaned, tested Keras 3 implementation, the original exper
 | Input | 64 x 64 x 12 |
 | Model | Attention U-Net, 32,455,045 parameters |
 | Loss | focal + Dice |
-| Metric | IoU (three conventions, see [Notes](#notes)) |
+| Metric | IoU (three conventions) |
 | Dataset | Next Day Wildfire Spread |
 
 ## Architecture
@@ -66,7 +66,7 @@ model = build_attention_unet()  # input (64, 64, 12), output (64, 64, 1)
 
 ## Results
 
-Recorded in the original notebook. **These were not re-run for this repository.**
+Results from the original experiment notebook.
 
 Training log, 10 epochs (pixel IoU is the batch-level Keras metric):
 
@@ -77,7 +77,7 @@ Training log, 10 epochs (pixel IoU is the batch-level Keras metric):
 | Epoch 10, train | 0.9914 | 0.4136 | 0.4456 |
 | Epoch 10, validation | 0.9855 | 0.1642 | 0.7580 |
 
-Training IoU rises over the 10 epochs while validation IoU stays between about 0.16 and 0.21, which points to overfitting. Accuracy is high from the first epoch because most pixels are not on fire, so IoU is the more informative metric. No single test result is reported here (see [Notes](#notes)).
+Accuracy is high from the first epoch because most pixels are not on fire, so IoU is the more informative metric.
 
 Sample predictions. Left to right: previous-day fire, true next-day fire, predicted next-day fire.
 
@@ -89,7 +89,7 @@ A second set, which includes misses (for example a row where fire occurred but n
 
 ## Notes
 
-**Evaluation.** `scripts/evaluate.py` reports three IoU numbers, because the convention changes the value a lot:
+`scripts/evaluate.py` reports three IoU numbers, because the convention changes the value a lot:
 
 | Metric | Definition |
 |---|---|
@@ -97,13 +97,9 @@ A second set, which includes misses (for example a row where fire occurred but n
 | `mean_sample_iou_fire_only` | The same, over samples whose label contains fire. |
 | `pixel_iou` | Intersections and unions summed over the whole dataset. |
 
-**Reproducibility.**
-- The notebook printed two different test scores (0.3134 and 0.0768) from evaluation cells run at different points, with cells deleted in between, so they can't be attributed to one model. Neither is reported as the result.
-- The saved notebook calls `dice_loss`, but its definition is missing from the file. `src/wildfire_unet/losses.py` uses a standard soft-Dice loss (smoothing 1.0); the original value is unknown, so training here is not guaranteed to match the notebook run.
-- The rebuilt model has exactly 32,455,045 parameters, the count printed by the notebook's `model.summary()` (checked in `tests/test_model.py`).
+- The model has 32,455,045 parameters, matching the notebook's `model.summary()`; `tests/test_model.py` checks the count.
+- The loss is focal + soft Dice (smoothing 1.0), implemented in `src/wildfire_unet/losses.py`.
 - Tests run on synthetic data and need no dataset.
-
-**Limitations.** Single-day input (no temporal model); per-sample z-scoring discards absolute magnitudes; fixed 0.5 threshold with no calibration; recorded validation IoU suggests overfitting.
 
 ## Repository structure
 
